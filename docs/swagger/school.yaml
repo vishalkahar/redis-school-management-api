@@ -1,0 +1,81 @@
+paths:
+  /api/schools:
+    post:
+      tags:
+        - Schools
+      summary: Create a new school
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - address
+                - contactInfo
+              properties:
+                name:
+                  type: string
+                address:
+                  type: object
+                  properties:
+                    street:
+                      type: string
+                    city:
+                      type: string
+                    state:
+                      type: string
+                    country:
+                      type: string
+                    zipCode:
+                      type: string
+                contactInfo:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                    phone:
+                      type: string
+                    website:
+                      type: string
+      responses:
+        201:
+          description: School created successfully
+        400:
+          description: Invalid input
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden - Not a superadmin
+
+    get:
+      tags:
+        - Schools
+      summary: Get all schools
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [active, inactive, suspended]
+      responses:
+        200:
+          description: List of schools
+        401:
+          description: Unauthorized

@@ -1,6 +1,9 @@
 const config                = require('./config/index.config.js');
 const Cortex                = require('ion-cortex');
 const ManagersLoader        = require('./loaders/ManagersLoader.js');
+const express               = require('express');
+const swaggerUi             = require('swagger-ui-express');
+const swaggerSpec           = require('./config/swagger.config');
 
 const mongoDB = config.dotEnv.MONGO_URI? require('./connect/mongo')({
     uri: config.dotEnv.MONGO_URI
@@ -22,9 +25,12 @@ const cortex = new Cortex({
     idlDelay: "200ms",
 });
 
-
+const app = express();
 
 const managersLoader = new ManagersLoader({config, cache, cortex});
 const managers = managersLoader.load();
 
 managers.userServer.run();
+
+// Swagger documentation route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
